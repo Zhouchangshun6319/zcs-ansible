@@ -1,29 +1,8 @@
 [127.0.0.1]
 127.0.0.1 ansible_ssh_user="{{ devuser }}" ansible_ssh_pass="{{ devpass }}" ansible_become_pass="{{ devpass }}"
 
-[dev102]
-192.168.14.102 ansible_ssh_user="{{ devuser }}" ansible_ssh_pass="{{ devpass }}" ansible_become_pass="{{ devpass }}"
+[dev225]
+192.168.14.225 ansible_ssh_user="{{ devuser }}" ansible_ssh_pass="{{ devpass }}" ansible_become_pass="{{ devpass }}"
 
-[caclub-account-management:children]
-dev102
-
-[caclub-community-management:children]
-dev102
-
-[caclub-postman-management:children]
-dev102
-
-[caclub-reputation-management:children]
-dev102
-
-[caclub-data-center:children]
-dev102
-
-[caclub-wechat-center:children]
-dev102
-
-[caclub-caclub-platform:children]
-dev102
-
-[caclub-order-management:children]
-dev102
+[test-mall-erp:children]
+127.0.0.1
