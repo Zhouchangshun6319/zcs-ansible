@@ -1,0 +1,39 @@
+---
+- name: remove all images without at least one container associated to them
+  command: docker image prune -a -f
+
+- name: Create the file if it not exists
+  file:
+     path: /home/dkongjian/gitrepo/dev-stable-caclub
+     state: directory
+
+- name: Cr
+xists
+  file:
+     path: /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}
+     state: directory
+
+###########checkout-build##########
+- name: check out the repository on the host
+  git: repo=http://{{git_user}}:{{git_pass}}@{{git_url}}/{{git_group_name| default('caclub')}}/{{git_project_name}}.git dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}} version={{gitbranch}}
+   
+- name: build the project with MAVEN
+  command: mvn -f /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/pom.xml clean package -Dmaven.test.skip=true
+
+##########logback-service###########
+- name: copy the logback-spring.xml file
+  template: src=logback-spring.xml dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target/logback-spring.xml  owner=dkongjian group=dkongjian mode=0644
+  become: True
+
+##############community#############
+- name: copy the Dockerfile file
+  template: src=Dockerfile dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target/Dockerfile  owner=dkongjian group=dkongjian mode=0644
+  become: True
+
+#########docker-build############
+- name: build docker image 
+  command: docker build -t {{private_docker_repo}}/dev-stable-caclub/{{git_project_name}}:{{image_tag}} /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target
+
+- name: push to docker repo
+  command: docker push {{private_docker_repo}}/dev-stable-caclub/{{git_project_name}}:{{image_tag}}
+
