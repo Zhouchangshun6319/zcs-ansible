@@ -1,0 +1,103 @@
+---
+
+- name: Deploy new {{git_project_name}} service
+  hosts: 127.0.0.1
+  remote_user: dkongjian
+  roles:
+    - prepare-env-service
+    - checkout-build-service
+    - logback-service
+    - caclub-{{git_project_name}}
+    - docker-build-service
+- name: Deploy new {{git_project_name}} service
+  hosts: "caclub-{{git_project_name}}"
+  remote_user: dkongjian
+  roles:
+    - check-docker-env-service
+    - deploy-container-service
+
+########env#############
+- name: remove all images without at least one container associated to them
+  command: docker image prune -a -f
+
+- name: Create the file if it not exists
+  file:
+     path: /home/dkongjian/gitrepo/dev-stable-caclub
+     state: directory
+
+- name: Cr
+xists
+  file:
+     path: /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}
+     state: directory
+
+###########checkout-build##########
+- name: check out the repository on the host
+  git: repo=http://{{git_user}}:{{git_pass}}@{{git_url}}/{{git_group_name| default('caclub')}}/{{git_project_name}}.git dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}} version={{gitbranch}}
+   
+- name: build the project with MAVEN
+  command: mvn -f /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/pom.xml clean package -Dmaven.test.skip=true
+
+##########logback-service###########
+- name: copy the logback-spring.xml file
+  template: src=logback-spring.xml dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target/logback-spring.xml  owner=dkongjian group=dkongjian mode=0644
+  become: True
+
+##############community#############
+- name: copy the Dockerfile file
+  template: src=Dockerfile dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target/Dockerfile  owner=dkongjian group=dkongjian mode=0644
+  become: True
+
+#########docker-build############
+- name: build docker image 
+  command: docker build -t {{private_docker_repo}}/dev-stable-caclub/{{git_project_name}}:{{image_tag}} /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target
+
+- name: push to docker repo
+  command: docker push {{private_docker_repo}}/dev-stable-caclub/{{git_project_name}}:{{image_tag}}
+
+#########check-docker-env#########
+  - name: sudo apt-get update and install "python-pip" package
+    apt: 
+       name: python-pip 
+       state: present 
+       update_cache: yes
+       cache_valid_time: 360000
+    become: True
+
+  - name: docker login 
+    docker_login: 
+      registry: "{{private_docker_repo}}"
+      username: "{{docker_repo_user}}"
+      password: "{{docker_repo_pass}}"
+      reauthorize: yes
+    # become: True
+
+  - name: remove all images without at least one container associated to them
+    command: docker image prune -a -f
+
+#####deploy-container########
+- name: pull docker images
+  command: docker pull {{private_docker_repo}}/dev-stable-caclub/{{git_project_name}}:{{image_tag}}
+
+- name: Stop a container
+  docker_container:
+    name: "caclub-{{git_project_name}}"
+    state: absent
+    stop_timeout: 25
+
+- name: run docker_image
+  docker_container:
+    name: "caclub-{{git_project_name}}"
+    image: "{{private_docker_repo}}/dev-stable-caclub/{{git_project_name}}:{{image_tag}}"
+    network_mode: host
+    published_ports:
+      - "{{web_port}}:{{web_port}}"
+      - "{{dubbo_port}}:{{dubbo_port}}"
+    volumes:
+      - "/tmp:/tmp"
+      - "/home/dkongjian/logs/dev-stable-caclub/{{git_project_name}}:/logs/dev-stable-caclub/{{git_project_name}}"
+      - "/etc/localtime:/etc/localtime"
+      - "/etc/timezone:/etc/timezone"
+
+- name: wait for port available
+  wait_for: port={{ web_port }} delay=10 timeout=120
