@@ -1,0 +1,5 @@
+---
+- name: copy the logback-spring.xml file
+  template: src=logback-spring.xml dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target/logback-spring.xml  owner=dkongjian group=dkongjian mode=0644
+  become: True
+

@@ -1,0 +1,8 @@
+[127.0.0.1]
+127.0.0.1 ansible_ssh_user="{{ devuser }}" ansible_ssh_pass="{{ devpass }}" ansible_become_pass="{{ devpass }}"
+
+[dev225]
+192.168.14.225 ansible_ssh_user="{{ devuser }}" ansible_ssh_pass="{{ devpass }}" ansible_become_pass="{{ devpass }}"
+
+[mall-erp:children]
+127.0.0.1

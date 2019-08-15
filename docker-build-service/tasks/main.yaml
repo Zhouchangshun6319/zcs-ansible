@@ -7,7 +7,7 @@
      path: /home/dkongjian/gitrepo/stable
      state: directory
 
-- name: Crxists
+- name: Create the file if it not exists
   file:
      path: /home/dkongjian/gitrepo/stable/{{git_project_name}}
      state: directory

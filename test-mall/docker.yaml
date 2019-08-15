@@ -1,0 +1,17 @@
+---
+
+- name: Deploy new {{git_project_name}} service
+  hosts: 127.0.0.1
+  remote_user: dkongjian
+  roles:
+    - prepare-env-service
+    - checkout-build-service
+    - logback-service
+    - mall-{{git_project_name}}
+    - docker-build-service
+- name: Deploy new {{git_project_name}} service
+  hosts: "mall-{{git_project_name}}"
+  remote_user: dkongjian
+  roles:
+    - check-docker-env-service
+    - deploy-container-service

@@ -1,0 +1,24 @@
+---
+- name: remove all images without at least one container associated to them
+  command: docker image prune -a -f
+
+- name: Create the file if it not exists
+  file:
+     path: /home/dkongjian/gitrepo/dev-stable-caclub
+     state: directory
+
+- name: Create the file if it not exists
+  file:
+     path: /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}
+     state: directory
+
+- name: check out the repository on the host
+  git: repo=http://{{git_user}}:{{git_pass}}@{{git_url}}/{{git_group_name| default('caclub')}}/{{git_project_name}}.git dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}} version={{gitbranch}}
+   
+- name: build the project with MAVEN
+  command: mvn -f /home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/pom.xml clean package -Dmaven.test.skip=true
+
+- name: copy the logback-spring.xml file
+  template: src=logback-spring.xml dest=/home/dkongjian/gitrepo/dev-stable-caclub/{{git_project_name}}/target/logback-spring.xml  owner=dkongjian group=dkongjian mode=0644
+  become: True
+

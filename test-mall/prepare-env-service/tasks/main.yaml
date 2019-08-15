@@ -1,0 +1,15 @@
+---
+- name: remove all images without at least one container associated to them
+  command: docker image prune -a -f
+
+- name: Create the file if it not exists
+  file:
+     path: /home/dkongjian/gitrepo/test-stable
+     state: directory
+
+- name: Create the file if it not exists
+  file:
+     path: /home/dkongjian/gitrepo/test-stable/{{git_project_name}}
+     state: directory
+
+

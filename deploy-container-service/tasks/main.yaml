@@ -1,22 +1,22 @@
 ---
-  - name: sudo apt-get update and install "python-pip" package
-    apt: 
-       name: python-pip 
-       state: present 
-       update_cache: yes
-       cache_valid_time: 360000
-    become: True
+- name: sudo apt-get update and install "python-pip" package
+  apt: 
+     name: python-pip 
+     state: present 
+     update_cache: yes
+     cache_valid_time: 360000
+  become: True
 
-  - name: docker login 
-    docker_login: 
-      registry: "{{private_docker_repo}}"
-      username: "{{docker_repo_user}}"
-      password: "{{docker_repo_pass}}"
-      reauthorize: yes
-    # become: True
+- name: docker login 
+  docker_login: 
+    registry: "{{private_docker_repo}}"
+    username: "{{docker_repo_user}}"
+    password: "{{docker_repo_pass}}"
+    reauthorize: yes
+  # become: True
 
-  - name: remove all images without at least one container associated to them
-    command: docker image prune -a -f
+- name: remove all images without at least one container associated to them
+  command: docker image prune -a -f
 
 - name: pull docker images
   command: docker pull {{private_docker_repo}}/stable/{{git_project_name}}:{{image_tag}}

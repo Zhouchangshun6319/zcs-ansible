@@ -1,0 +1,24 @@
+---
+
+# Varibles
+
+#spring cloud config server
+config_host: http://configcenter.5jiaju.cn/
+config_username: dkongjianconfig
+config_password: df300087-1c6d-474c-930c-0012e9b0d2df
+
+
+#GIT Variables
+git_url: github.com
+git_user: Zhouchangshun6319
+git_pass: ZcsZcsxxx123
+
+
+#Docker Variables
+private_docker_repo: 192.168.14.225:5000
+docker_repo_user: devuser
+docker_repo_pass: devuser
+
+# server login credential
+devuser: dkongjian
+devpass: Dkongjian_0426

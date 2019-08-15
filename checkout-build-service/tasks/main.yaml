@@ -1,0 +1,6 @@
+---
+- name: check out the repository on the host
+  git: repo=http://{{git_user}}:{{git_pass}}@{{git_url}}/{{git_group_name| default('caclub')}}/{{git_project_name}}.git dest=/home/dkongjian/gitrepo/test-mall/{{git_project_name}} version={{gitbranch}}
+   
+- name: build the project with MAVEN
+  command: mvn -f /home/dkongjian/gitrepo/test-mall/{{git_project_name}}/pom.xml clean package -Dmaven.test.skip=true
