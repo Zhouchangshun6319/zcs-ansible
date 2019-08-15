@@ -3,11 +3,11 @@
 - name: pull docker images
   command: docker pull {{private_docker_repo}}/test-mall/{{git_project_name}}:{{image_tag}}
 
-- name: Stop a container
-  docker_container:
-    name: "caclub-{{git_project_name}}"
-    state: absent
-    stop_timeout: 25
+#- name: Stop a container
+#  docker_container:
+#    name: "caclub-{{git_project_name}}"
+#    state: absent
+#    stop_timeout: 25
 
 - name: run docker_image
   docker_container:
