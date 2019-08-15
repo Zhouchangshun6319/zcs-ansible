@@ -1,19 +1,17 @@
 ---
-- name: remove all images without at least one container associated to them
-  command: docker image prune -a -f
 
 - name: pull docker images
   command: docker pull {{private_docker_repo}}/test-mall/{{git_project_name}}:{{image_tag}}
 
 - name: Stop a container
   docker_container:
-    name: "test-mall-{{git_project_name}}"
+    name: "caclub-{{git_project_name}}"
     state: absent
     stop_timeout: 25
 
 - name: run docker_image
   docker_container:
-    name: "test-mall-{{git_project_name}}"
+    name: "caclub-{{git_project_name}}"
     image: "{{private_docker_repo}}/test-mall/{{git_project_name}}:{{image_tag}}"
     network_mode: host
     published_ports:
