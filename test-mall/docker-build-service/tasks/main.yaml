@@ -1,0 +1,7 @@
+---
+- name: build docker image 
+  command: docker build -t {{private_docker_repo}}/test-mall/{{git_project_name}}:{{image_tag}} /home/dkongjian/gitrepo/test-mall/{{git_project_name}}/target
+
+- name: push to docker repo
+  command: docker push {{private_docker_repo}}/test-mall/{{git_project_name}}:{{image_tag}}
+
