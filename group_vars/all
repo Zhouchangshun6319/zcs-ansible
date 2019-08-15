@@ -9,13 +9,13 @@ config_password: df300087-1c6d-474c-930c-0012e9b0d2df
 
 
 #GIT Variables
-git_url: gitlab.lcube.cn
-git_user: bo.hu
-git_pass: passworD_0323
+git_url: github.com
+git_user: Zhouchangshun6319
+git_pass: ZcsZcsxxx123
 
 
 #Docker Variables
-private_docker_repo: 192.168.14.190:5000
+private_docker_repo: 192.168.14.225:5000
 docker_repo_user: devuser
 docker_repo_pass: devuser
 

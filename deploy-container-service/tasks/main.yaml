@@ -18,7 +18,6 @@
   - name: remove all images without at least one container associated to them
     command: docker image prune -a -f
 
-#####deploy-container########
 - name: pull docker images
   command: docker pull {{private_docker_repo}}/stable/{{git_project_name}}:{{image_tag}}
 
